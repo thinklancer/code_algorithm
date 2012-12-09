@@ -15,7 +15,19 @@
 '''
 
 import numpy as np
+from heapq import *
+
+def prim0(data):  # direct search
+    path = data[0,0] # path of start
+    length = 0
+    passnode = set(path) # passed note set
+    unpassnode = set(data[:,0:2]).remove(passnode[0]) # unpassed note set
+    while len(unpassnode) != 0:
 
 
-if __name__ = "__main__"
-    data = np.loadtxt('edges.txt',skiprows=1)
+def buildheap(data):
+    print 0
+
+
+if __name__ == "__main__":
+    data = np.int_(np.loadtxt('edges.txt',skiprows=0))
