@@ -15,10 +15,14 @@
 '''
 
 import numpy as np
-from heapq import *
+import heapq
+import networkx as nx
+import sys
 
-def prim0(data):  # direct search
-    path = [data[0,0]] # path of start
+# method 1
+# tested on example.txt, works fine!
+def prim0(data,start):  # direct search
+    path = [data[start,0]] # path of start
     length = 0
     passnode = set(path) # passed note set
     unpassnode = set(data[:,0]).union(set(data[:,1])) # unpassed note set
@@ -33,18 +37,54 @@ def prim0(data):  # direct search
             passnode.add(node2[id])
             unpassnode.remove(node2[id])
             path.append(node2[id])
-            print node1[id],'-',node2[id],'---',shortest
+        #    print node1[id],'-',node2[id],'---',shortest
         else:
             passnode.add(node1[id])
             unpassnode.remove(node1[id])
             path.append(node1[id])
-            print node2[id],'-',node1[id],'---',shortest
+        #    print node2[id],'-',node1[id],'---',shortest
     print 'total length: ',length
 
-def buildheap(data):
-    print 0
+
+# build the graph from data
+def buildgraph(data):
+    G = nx.Graph()
+    for item in data:
+        G.add_edge(item[0],item[1],weight=item[2])
+    return G
+
+# build heap based on Graph and unpassed nodes
+def buildheap(G,nodes):
+    pq = []
+    for node in nodes:
+        min = sys.maxint
+        for v in G.neighbors(node):
+            if v not in nodes and G[node][v]['weight'] < min :
+                min = G[node][v]['weight']
+        heapq.heappush(pq,(min,node))
+    return pq
+
+# low speed Prim based on Heap...
+#  !!! need further study!!!
+def prim1(G,startnode):
+    path = [startnode]
+    passnode = set(path)
+    unpassnode = G.nodes()
+    unpassnode.remove(path[0])
+    length = 0
+    while len(unpassnode) != 0:
+        pq = buildheap(G,unpassnode)
+        shortest, node = heapq.heappop(pq)
+        passnode.add(node)
+        unpassnode.remove(node)
+        path.append(node)
+        #    print 'to:',node,' cost: ',shortest
+        length += shortest
+    print 'total length: ',length
 
 
 if __name__ == "__main__":
     data = np.int_(np.loadtxt('edges.txt',skiprows=1))
-    prim0(data)
+    prim0(data,1)
+    G = buildgraph(data)
+    prim1(G,1)
