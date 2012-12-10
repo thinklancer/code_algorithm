@@ -29,14 +29,11 @@ def sort1(data):
     # sort out the duplicates
     for item in set(diff):
         sid = np.where(diff == item)
-        oid = np.argsort(data[sid,0])
-        print item
-        print sid
-        print oid
-        oid = sid[oid]
-        sdata1[sid] = sdata1[oid]
-        sdata2[sid] = sdata2[oid]
-    return [sdata1,sdata2].transpose()
+        oid = np.argsort(sdata1[sid[0]])
+        oid = sid[0][oid[::-1]]
+        sdata1[sid[0]] = sdata1[oid]
+        sdata2[sid[0]] = sdata2[oid]
+    return np.array([sdata1,sdata2]).transpose()
 
 
 def sort2(data):
