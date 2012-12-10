@@ -1,5 +1,5 @@
 #!/opt/local/bin/python
-
+import sys
 import numpy as np
 
 '''
@@ -21,19 +21,37 @@ import numpy as np
 
 ### sort the data into greedy order
 def sort1(data):
-    id = np.argsort(data[:,0]-data[:,1])
-    return np.array([data[id[::-1],0],data[id[::-1],1]]).transpose()
+    diff =  data[:,1]-data[:,0]  # inverse way since the sorting is from small to large
+    id = np.argsort(diff)
+    diff = diff[id]
+    sdata1 = data[id,0]
+    sdata2 = data[id,1]
+    # sort out the duplicates
+    for item in set(diff):
+        sid = np.where(diff == item)
+        oid = np.argsort(data[sid,0])
+        print item
+        print sid
+        print oid
+        oid = sid[oid]
+        sdata1[sid] = sdata1[oid]
+        sdata2[sid] = sdata2[oid]
+    return [sdata1,sdata2].transpose()
+
 
 def sort2(data):
-    id = np.argsort(data[:,0]-data[:,1])
+    id = np.argsort(np.float64(data[:,0])/data[:,1])  # weight/length in increasing order
     return np.array([data[id[::-1],0],data[id[::-1],1]]).transpose()
 
 def computeTime(data):
-    b = np.cumsum(data[:,1])
-    return np.sum(data[:,0]*b)
+    b = np.cumsum(data[:,1],dtype=long)
+    return np.sum(data[:,0]*b,dtype=long)
 
 if __name__ == "__main__":
-    data = np.loadtxt('jobs.txt',skiprows=1)
-    sortdata = sort(data)
+    data = np.loadtxt(sys.argv[1],skiprows=1)
+    data = np.int64(data)
+    sortdata = sort1(data)
+    print computeTime(sortdata)
+    sortdata = sort2(data)
     print computeTime(sortdata)
     
