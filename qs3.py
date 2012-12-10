@@ -18,16 +18,33 @@ import numpy as np
 from heapq import *
 
 def prim0(data):  # direct search
-    path = data[0,0] # path of start
+    path = [data[0,0]] # path of start
     length = 0
     passnode = set(path) # passed note set
-    unpassnode = set(data[:,0:2]).remove(passnode[0]) # unpassed note set
+    unpassnode = set(data[:,0]).union(set(data[:,1])) # unpassed note set
+    unpassnode.remove(path[0])
     while len(unpassnode) != 0:
-
+        cuts = [item for item in data if (item[0] in passnode and item[1] in unpassnode) or (item[0] in unpassnode and item[1] in passnode)]
+        node1,node2,distance = zip(*cuts)
+        shortest = min(distance)
+        length += shortest
+        id = distance.index(shortest)
+        if node1[id] in passnode:
+            passnode.add(node2[id])
+            unpassnode.remove(node2[id])
+            path.append(node2[id])
+            print node1[id],'-',node2[id],'---',shortest
+        else:
+            passnode.add(node1[id])
+            unpassnode.remove(node1[id])
+            path.append(node1[id])
+            print node2[id],'-',node1[id],'---',shortest
+    print 'total length: ',length
 
 def buildheap(data):
     print 0
 
 
 if __name__ == "__main__":
-    data = np.int_(np.loadtxt('edges.txt',skiprows=0))
+    data = np.int_(np.loadtxt('edges.txt',skiprows=1))
+    prim0(data)
