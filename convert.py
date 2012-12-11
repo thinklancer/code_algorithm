@@ -9,6 +9,11 @@ import numpy as np
 import sys
 
 if __name__ == "__main__":
-    data = np.loadtxt(sys.argv[1],skiprows=1)
-    nnode = len(data[0,:])
+    data = np.loadtxt('example2.txt',skiprows=1)
+    nnode = len(data[:,0])
+    for i in np.arange(nnode-1):
+        for j in np.arange(nnode-1-i)+1+i:
+            diff = np.logical_xor(data[i,:],data[j,:])
+            dist = len(np.where(diff == True)[0])
+            print i,j,dist
 
