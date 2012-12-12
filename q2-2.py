@@ -15,19 +15,28 @@
     NOTE: The graph implicitly defined by the data file is so big that you probably can't write it out explicitly, let alone sort the edges by cost. So you will have to be a little creative to complete this part of the question. For example, is there some way you can identify the smallest distances without explicitly looking at every pair of nodes?
 '''
 
+
 import sys
 import numpy as np
 from unionfind import *
 
 # low efficient at the moment...
-def cluster(data,nf,mindist):
+def builddist(data):
     nnode = len(data[:,0])
+    dist = np.empty([nnode,nnode],dtype=int)
     for i in np.arange(nnode-1):
-        print i,'/',nnode
         for j in np.arange(nnode-1-i)+1+i:
             diff = np.logical_xor(data[i,:],data[j,:])
-            dist = len(np.where(diff == True)[0])
-            if dist == mindist:
+            dist[i,j] = len(np.where(diff == True)[0])
+            #dist[i,j] = sum(ch1 != ch2 for ch1, ch2 in zip(data[i,:],data[j,:]))
+    print 'finish distance calculation'
+    return dist
+
+def cluster(data,nf,dist,mindist):
+    nnode = len(data[:,0])
+    for i in np.arange(nnode-1):
+        for j in np.arange(nnode-1-i)+1+i:
+            if dist[i,j] == mindist:
                 if nf.find(i) != nf.find(j):
                     nf.union(i,j)
     return nf
@@ -36,8 +45,9 @@ if __name__ == "__main__":
     data = np.int_(np.loadtxt(sys.argv[1],skiprows=1))
     nf = UnionFind()
     nf.insert_objects(np.arange(len(data[:,0])))
-    nf = cluster(data,nf,0)
-    nf = cluster(data,nf,1)
-    nf = cluster(data,nf,2)
-    #print nf
+    dist = builddist(data)
+    nf = cluster(data,nf,dist,0)
+    nf = cluster(data,nf,dist,1)
+    nf = cluster(data,nf,dist,2)
+    print nf
     print len(set(nf.parent_pointers.values()))
