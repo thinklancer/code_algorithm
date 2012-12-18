@@ -10,6 +10,8 @@
     In the box below, type in the value of the optimal solution.
 
     ADVICE: If you're not getting the correct answer, try debugging your algorithm using some small test cases. And then post them to the discussion forum!
+
+answer to question 1:  2493893
 '''
 
 import numpy as np
@@ -30,13 +32,18 @@ def buildKmatric(value,weight,wlimit):
     return ma
 
 # reconstruct the item in use
-def finditem(ma):
-    print ma
+def finditem(ma,value,weight):
+    #print ma
     items = []
     target = ma[-1,-1]
-    for i in range(len(ma)):
-        for j in range(len(ma[0])):
-            id = np.where(ma[-i,:]==target)
+    i = len(ma)-1
+    j = len(ma[0])-1
+    while target > 0:
+        id = np.where(ma[:,j]==target)
+        i = id[0][0]-1
+        print '(',value[i],',',weight[i],')'
+        j = j-weight[i]
+        target = ma[i,j]
 
 
 # return the maximum weight
@@ -44,7 +51,7 @@ def printweight(ma):
     print 'maximum weight:',ma[-1,-1]
 
 if __name__ == "__main__":
-    data = np.loadtxt('example.txt')
+    data = np.loadtxt('knapsack1.txt')
     wlimit = int(data[0,0])
     nelement = int(data[0,1])
     data = np.int_(data[1:])
@@ -53,5 +60,5 @@ if __name__ == "__main__":
         print "!!wrong number of items!!"
         exit()
     ma = buildKmatric(data[:,0],data[:,1],wlimit)
-    finditem(ma)
+    finditem(ma,data[:,0],data[:,1])
     printweight(ma)
