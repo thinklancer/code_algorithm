@@ -10,6 +10,17 @@ def calOBS(w):
     m = np.zeros([n,n])
     for s in np.arange(n):
         for i in np.arange(n-s):
+            temp = np.zeros(s+1)
+            for j in np.arange(s+1):
+                r = i+j
+                up = min([n-1,i+s])
+                temp[j] = sum(w[i:up+1])
+                if i<=r-1:
+                    temp[j] += m[i,r-1]
+                if i+s<n and r+1<= i+s:
+                    temp[j] += m[r+1,i+s]
+            m[i,i+s]=min(temp)
+    return m[0,-1]
 
 
 if __name__ == "__main__":
