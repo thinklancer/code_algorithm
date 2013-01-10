@@ -21,19 +21,18 @@ def fw(graph,n,m):
         a[i,i,0]=0
     for i in range(m):
         a[graph[i,0],graph[i,1],0] = graph[i,2]
+    print "# start searching shortest path"
     # start to search all shortest paths
     for k in range(1,n):
+        flag = k%2
         for i in range(n):
-            for j in range(n):
-                a[i,j,1] = min(a[i,j,0],a[i,k,0]+a[k,j,0])
-        a[:,:,0]=a[:,:,1]
-    # check negative cycles
-    for i in range(n):
-        if a[i,i,1] < 0:
-            print "error in",i
-            exit()
+            a[i,:,flag] = np.amin([a[i,:,flag-1],a[i,k,flag-1]+a[k,:,flag-1]],axis=0)
+            # check negative cycles
+            if a[i,i,flag]<0:
+                print "error in",i,k
+                exit()
     # output
-    print a[:,:,1].min()
+    print "shortest path length:",a[:,:,flag].min()
 
 if __name__ == "__main__":
     n,m = np.int_(np.fromfile(sys.argv[1],count=2,sep=' '))
