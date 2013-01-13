@@ -16,23 +16,22 @@ maximum = 1000000
 # Floyd-Warshall algorithm to solve All-Pairs Shortest Paths problem
 def fw(graph,n,m):
     # initialize the A matrix
-    a = np.ones((n,n,2),dtype=np.int)*maximum
+    a = np.ones((n,n),dtype=np.int)*maximum
     for i in range(n):
-        a[i,i,0]=0
+        a[i,i]=0
     for i in range(m):
-        a[graph[i,0],graph[i,1],0] = graph[i,2]
+        a[graph[i,0],graph[i,1]] = graph[i,2]
     print "# start searching shortest path"
     # start to search all shortest paths
     for k in range(1,n):
-        flag = k%2
         for i in range(n):
-            a[i,:,flag] = np.amin([a[i,:,flag-1],a[i,k,flag-1]+a[k,:,flag-1]],axis=0)
+            a[i,:] = np.amin([a[i,:],a[i,k]+a[k,:]],axis=0)
             # check negative cycles
-            if a[i,i,flag]<0:
+            if a[i,i]<0:
                 print "error in",i,k
                 exit()
     # output
-    print "shortest path length:",a[:,:,flag].min()
+    print "shortest path length:",a[:,:].min()
 
 if __name__ == "__main__":
     n,m = np.int_(np.fromfile(sys.argv[1],count=2,sep=' '))
