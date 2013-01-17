@@ -49,7 +49,7 @@ def check(n):
             print j+index,od[j+index],bin(od[j+index]).count("1")
         index+=nelement
 
-
+# solve the TSP.
 def search(dist,od,ncity):
     nset = 2**(ncity-1)
     A = np.zeros((nset,ncity))+LARGENUMBER
@@ -62,7 +62,7 @@ def search(dist,od,ncity):
             for j in range(1,ncity):
                 if bin(od[index]).zfill(ncity+1)[-j] == '1': # check j in S
                     temp = np.zeros(ncity)+LARGENUMBER
-                    target = index-2**(j-1) # S-{j} case
+                    target = np.where(od == od[index]-2**(j-1)) # S-{j} case
                     temp[0] = A[target,0]+dist[0,j]
                     for k in range(1,ncity):
                         if bin(od[index]).zfill(ncity+1)[-k] == '1': # check k in S
