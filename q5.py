@@ -67,8 +67,6 @@ def search(dist,od,ncity):
     A = np.zeros((nset,ncity))+LARGENUMBER
     A[0,0] = 0
     index = 1
-    firstpart = 0
-    oldelement = 1
     for m in range(1,ncity): # loop all subproblem size
         nelement=np.int(comb(ncity-1,m))
         print "processing ..",m,'/',ncity," for ",nelement,"cases"
