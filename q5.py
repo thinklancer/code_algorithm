@@ -67,7 +67,7 @@ def search(dist,od,ncity):
     A = np.zeros((nset,ncity))+LARGENUMBER
     A[0,0] = 0
     index = 1
-    firstpart = 1
+    firstpart = 0
     oldelement = 1
     for m in range(1,ncity): # loop all subproblem size
         nelement=np.int(comb(ncity-1,m))
@@ -80,21 +80,13 @@ def search(dist,od,ncity):
             for j in range(1,ncity):
                 if bin(od[index]).zfill(ncity+1)[-j] == '1': # check j in S
                     temp = np.zeros(ncity)+LARGENUMBER
-                    #print nelement,od[0:oldelement]
-                    target = np.where(od[0:oldelement] == od[index]-2**(j-1)) # S-{j} case
-                    #print target,od[0:oldelement],od,od[index]-2**(j-1)
+                    target = od[index]-2**(j-1) # S-{j} case
                     temp[0] = A[target,0]+dist[0,j]
                     for k in range(1,ncity):
                         if bin(od[index]).zfill(ncity+1)[-k] == '1': # check k in S
                             temp[k]=A[target,k]+dist[k,j]
-                    A[index,j]=min(temp)
+                    A[od[index],j]=min(temp)
             index+=1
-        # remove excess part
-        index -= firstpart
-        A=np.delete(A,np.s_[0:firstpart],0)
-        od=np.delete(od,np.s_[0:firstpart],0)
-        firstpart = nelement
-        oldelement = nelement
     temp = np.zeros(ncity)+LARGENUMBER
     for i in range(1,ncity):
         temp[i]=A[-1,i]+dist[0,i]
